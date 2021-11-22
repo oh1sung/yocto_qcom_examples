@@ -1,0 +1,5 @@
+cmake_minimum_required(VERSION 2.4)
+project(helloworld)
+set(SRC_FILES helloworld.c )
+add_executable(helloworld ${SRC_FILES})
+install(TARGETS helloworld RUNTIME DESTINATION bin)
