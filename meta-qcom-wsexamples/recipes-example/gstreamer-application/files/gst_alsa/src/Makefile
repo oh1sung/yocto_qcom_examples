@@ -11,8 +11,12 @@ $(TARGET): $(TARGET).c
 
 .PHONY: clean
 
-install:
-	cp $(TARGET) /usr/bin/
+
+install: install_gst_audio_sample 
+
+install_gst_audio_sample: gst_audio_sample
+	install -d $(DESTDIR)
+	install -m 755 gst_audio_sample $(DESTDIR)
 
 clean:
 	rm -f $(TARGET)

@@ -10,10 +10,16 @@ TARGETS = $(foreach n,$(SOURCES),$(basename $(n)))
 
 all: ${TARGETS}
 
-.PHONY: all clean
+.PHONY: all clean install
 
 ${TARGETS}: %:%.c
 	$(CC) -Wall $< -o $@ $(FLAGS)
 
 clean:
 	rm -f ${TARGETS}
+
+install: install_transform_display
+
+install_transform_display: transform_display
+	install -d $(DESTDIR)
+	install -m 755 transform_display $(DESTDIR)

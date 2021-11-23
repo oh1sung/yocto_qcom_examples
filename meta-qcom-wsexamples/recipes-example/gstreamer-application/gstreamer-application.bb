@@ -11,20 +11,22 @@ LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/MIT;md5=0835ade698e0bcf8506ecda
 PR = "r0"
 SRC_URI = "file://*	"
 #DEPENDS += " cmake "
-inherit autotools pkgconfig
+inherit pkgconfig
 
 DEPENDS = "gstreamer1.0 "
 
 
 S = "${WORKDIR}/"
 
-EXTRA_OECMAKE=""
-
 do_compile() {
 		 cd ${S}
-	     make -f Makefile all
+	     oe_runmake -f Makefile all
 }
 
 do_install() {
-
+	install -d ${D}${bindir}
+	oe_runmake install 'DESTDIR=${D}${bindir}'
 }
+
+
+FILES_${PN} += "${bindir}"

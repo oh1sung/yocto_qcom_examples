@@ -11,10 +11,16 @@ TARGETS = $(foreach n,$(SOURCES),$(basename $(n)))
 
 all: ${TARGETS}
 
-.PHONY: ${TARGETS}
+.PHONY: all clean install
 
 ${TARGETS}: %:%.c
 	$(CC) -Wall $< -o $@ $(FLAGS)
 
 clean:
 	rm -f ${TARGETS}
+
+install: install_tflite_object_detection
+
+install_tflite_object_detection: tflite_object_detection
+	install -d $(DESTDIR)
+	install -m 755 tflite_object_detection $(DESTDIR)

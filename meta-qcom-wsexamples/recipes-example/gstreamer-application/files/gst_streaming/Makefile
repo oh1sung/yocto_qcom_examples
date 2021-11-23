@@ -10,10 +10,16 @@ TARGETS = $(foreach n,$(SOURCES),$(basename $(n)))
 
 all: ${TARGETS}
 
-.PHONY: all clean
+.PHONY: all clean install
 
 ${TARGETS}: %:%.c
 	$(CC) -Wall $< -o $@ $(FLAGS)
 
 clean:
 	rm -f ${TARGETS}
+
+install: install_tcp_server
+
+install_tcp_server: tcp_server
+	install -d $(DESTDIR)
+	install -m 755 tcp_server $(DESTDIR)

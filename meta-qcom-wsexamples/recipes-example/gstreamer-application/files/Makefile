@@ -5,13 +5,14 @@ SUBDIRS = \
 	gst_audio \
 	gst_camera \
 	gst_encode_decode \
-	gst_gui_app \
 	gst_streaming \
 	gst_transform \
 	gst_alsa/src \
-	gst_tflite/src
+	gst_tflite/src 
 
-.PHONY: all clean
+#qt5	gst_gui_app \
+
+.PHONY: all clean install
 
 all: 
 	@list='$(SUBDIRS)'; for subdir in $$list; do \
@@ -21,4 +22,9 @@ all:
 clean:
 	@list='$(SUBDIRS)'; for subdir in $$list; do \
 		$(MAKE) -C $$subdir clean;\
+	done
+
+install: 
+	@list='$(SUBDIRS)'; for subdir in $$list; do \
+		$(MAKE) -C $$subdir install 'DESTDIR=$(DESTDIR)';\
 	done
