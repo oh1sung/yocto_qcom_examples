@@ -29,35 +29,3 @@ github.com
 Maintainer: Wanho Sung <oh1sung@gmail.com>
 
 
-Table of Contents
-=================
-
-  I. Adding the wsdevelop layer to your build
- II. Misc
-
-
-I. Adding the wsdevelop layer to your build
-=================================================
-
-
-In order to use this layer, you need to make the build system aware of
-it.
-
-Assuming the wsdevelop layer exists at the top-level of your
-yocto build tree, you can add it to the build system by adding the
-location of the wsdevelop layer to bblayers.conf, along with any
-other layers needed. e.g.:
-
-  BBLAYERS ?= " \
-    /path/to/yocto/meta \
-    /path/to/yocto/meta-yocto \
-    /path/to/yocto/meta-yocto-bsp \
-    /path/to/yocto/meta-wsdevelop \
-    "
-
-
-II. Misc
-========
-
-This layer contain example recipes for the title 
-[Using Yocto Project with Beaglebone Black](https://www.packtpub.com/hardware-and-creative/yocto-beaglebone)

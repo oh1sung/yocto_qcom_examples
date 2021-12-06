@@ -52,7 +52,7 @@ static gboolean bus_callback(GstBus *bus, GstMessage *msg, gpointer data)
 int main(int argc, char *argv[])
 {
     GMainLoop *loop;
-    GstElement *pipeline, *source, *framefilter, *parse, *muxer, *queue, *sink;
+    GstElement *pipeline, *source, *framefilter,*omxh264enc, *parse, *muxer, *queue, *sink;
     GstBus *bus;
     guint bus_id;
     gint8 camera_id;
@@ -84,19 +84,20 @@ int main(int argc, char *argv[])
     pipeline        = gst_pipeline_new("video-streaming");
     source          = gst_element_factory_make("qtiqmmfsrc",   "qmmf-source");
     framefilter     = gst_element_factory_make("capsfilter",   "frame-filter");
+    omxh264enc     = gst_element_factory_make("omxh264enc",   "OpenMax-enc");
     parse           = gst_element_factory_make("h264parse",    "h264-parse");
     muxer           = gst_element_factory_make("mpegtsmux",    "mpegts-muxer");
     queue           = gst_element_factory_make("queue",        "queue");
     sink            = gst_element_factory_make("tcpserversink","tcp-server");
 
 
-    if (!pipeline || !source || !framefilter || !parse || !queue || !sink) {
+    if (!pipeline || !source || !framefilter || !omxh264enc || !parse || !muxer || !queue || !sink) {
         g_printerr("Create element failed.\n");
         return -1;
     }
 
     g_object_set (G_OBJECT(source), "camera", camera_id, NULL);
-
+#ifdef _RB5
     if (camera_id == 0) {
         g_object_set(G_OBJECT(framefilter), "caps", 
                             gst_caps_from_string("video/x-h264,framerate=30/1,width=1920,height=1080"), NULL);
@@ -104,6 +105,17 @@ int main(int argc, char *argv[])
         g_object_set(G_OBJECT(framefilter), "caps", 
                             gst_caps_from_string("video/x-h264,framerate=30/1,width=1280,height=720"), NULL);
     }
+#else
+    if (camera_id == 0) {
+        g_object_set(G_OBJECT(framefilter), "caps", 
+                            gst_caps_from_string("video/x-raw\(memory:GBM\),format=NV12,framerate=30/1,width=1920,height=1080"), NULL);
+    } else {
+        g_object_set(G_OBJECT(framefilter), "caps", 
+                            gst_caps_from_string("video/x-raw\(memory:GBM\),format=NV12,framerate=30/1,width=1280,height=720"), NULL);
+    }
+
+#endif
+    g_object_set (G_OBJECT(omxh264enc), "periodicity-idr", 1, "interval-intraframes", 29, NULL);
 
     g_object_set (G_OBJECT(parse), "config-interval", 1, NULL);
     g_object_set (G_OBJECT(sink), "host", argv[2], "port", port, NULL);
@@ -113,12 +125,12 @@ int main(int argc, char *argv[])
     bus_id = gst_bus_add_watch(bus, bus_callback, loop);
     gst_object_unref(bus);
 
-    gst_bin_add_many(GST_BIN(pipeline), source, framefilter, parse, muxer, queue, sink, NULL);
-    gst_element_link_many(source, framefilter, parse, muxer, queue, sink, NULL);
+    gst_bin_add_many(GST_BIN(pipeline), source, framefilter, omxh264enc, parse, muxer, queue, sink, NULL);
+    gst_element_link_many(source, framefilter, omxh264enc, parse, muxer, queue, sink, NULL);
 
     gst_element_set_state(pipeline, GST_STATE_PLAYING);
 
-    g_print("Start\n");
+    g_print("Start v6\n");
     g_print("  vlc tcp://%s:%d/\n", argv[2], port);
     g_main_loop_run(loop);
     g_print("Stop\n");
