@@ -23,5 +23,5 @@ EXTRA_OECMAKE=""
 #
 do_install() {
 	     install -d ${D}${bindir}
-	     install -m 0755 ./build/helloworld ${D}${bindir}
+	     install -m 0755   ${S}build/helloworld ${D}${bindir}
 }
